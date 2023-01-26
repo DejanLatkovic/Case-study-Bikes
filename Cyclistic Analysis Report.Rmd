@@ -1,0 +1,85 @@
+---
+title: "Cyclistic Analysis"
+author: "Dejan Latkovic"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Overview:
+The data collected from Cyclistic’s 2022 trip report show a bell curve in all groups with peaks reaching in the summer (July-August). Reasonable since biking is less popular in the winter. This theory also supports why most casual bikers don’t start cycling until May-October when they temperature is reasonable for cycling.
+
+### Objective:
+Cyclistic’s wants to increase revenue but have decided instead of tailoring to people unfamiliar with cycling they will increase revenue by persuading casual cyclists to join in on the annual membership. My job is to figure out the difference between members and casual users.
+
+#### Disclaimer:
+Cyclistic is a fictional company therefore it will be imagined to be in Canada, Ontario, where it tends to be cold during the winter. 
+
+## Process:
+The main task was to figure out which group of people to target the most and at what time of the year. This is key to understanding the difference between the two groups and figuring out any potential membership clients. Due to this, lots of dirty data was clean, processed, and reviewed.
+
+Since Cyclistic provided a large data set, big query and SQL was the route taken to clean and process data. Before uploading, Microsoft Excel was used to remove unused data that would reduce clutter and size of the file. This in turn optimizes for both excel and big query. 
+
+First was required to figure out exactly what types of groups existed in the database using the formula:
+	SELECT
+		DISTINCT(rideable_type)
+	FROM
+		<File directory> (Checked all months to ensure nothing was missed)
+
+After using big query to retrieve the number of entries for each specific group using the formula here:
+	SELECT
+		rideable_type, status
+	FROM
+		<File directory>
+	WHERE
+		rideable_type = “<bike type>” AND status = “<Group type>”
+
+All the numbers were recorded in Google sheets. Later RStudio was used to produce this very report.
+Before the report was made, a few problems occurred. They were not able to be solved either (even after 3 hours of research and trial and error). When all assets were loaded/read into the RMarkdown file, when ggplot2 plotted the bar chart, it displayed the months in alphabetical order. Attempts were made to fix the issue. The solution was to number the months from 1-12.
+
+As shown here:
+
+### Data
+```{r}
+library("ggplot2")
+library("tidyverse")
+library("lubridate")
+library("dplyr")
+chart1 = read.csv("/Users/Deja/Desktop/Cleaned Data/Recorded Data/RStudio_optimized_chart1.csv")
+
+ggplot(chart1, aes(fill=Group, y=Trips, x=Month)) + 
+    geom_bar(position="stack", stat="identity") +
+  ggtitle("Cyclistic Bikes Trips in 2022 by Group")
+
+
+```
+
+
+
+#### Analysis of Cyclistic Bikes Trips in 2022 by Group:
+
+From the “Cyclistic Bikes Trips in 2022 by Group” chart it is observed that all docked bikes are used by causals throughout the whole year. This casual(docked) group has potential to become members and increase total profit margins. Since Cyclistics did not provide financial data of the cost of using docked bikes, there is no physical profit. Nevertheless, profit will increase due to the increase of a new member group.
+
+Another noticeable point is observed that many causals spike between April-October. This indicates that 88% of casual users use Cyclistic’s service in the spring, summer, and fall. This is usually the time when it gets warm enough for most people to enjoy biking. This is also supported by the members data since they too decrease usage during the winter.
+
+Also doesn’t seem to be a substantial difference between the sub-groups in the chart.
+
+```{r}
+chart2 = read.csv("/Users/Deja/Desktop/Cleaned Data/Recorded Data/RStudio_optimized_chart2.csv")
+ggplot(chart2, aes(colour=Group, y=Total, x=Month,size=2)) + 
+    geom_line(stat="identity") +
+  ggtitle("Total Members Vs. Total Casual Users")
+```
+
+
+### Difference Between Members and Casuals:
+
+The members of Cyclistic have a much smoother bell curve in comparison to the spike that the casuals have in May. Other than that, the data is almost identical in slope and does not pertain any actionable data.
+The only difference is the casual docked bike sub-group which does not exist in the collective members group.
+
+
+## Executive Conclusion:
+
+The next steps for the company would be to have a special semi-annual membership to be able to include casual bike users who mostly use the service in the spring and summer. Another point is for the media team to direct their attention to casuals using docked bikes.
+
+
+
